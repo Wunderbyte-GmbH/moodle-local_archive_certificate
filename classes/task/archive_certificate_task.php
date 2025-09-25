@@ -29,7 +29,7 @@ class archive_certificate_task extends adhoc_task {
      * @return string
      */
     public function get_name() {
-        return get_string('archivetask', 'archive_certificate');
+        return get_string('archivetask', 'local_archive_certificate');
     }
 
     /**
