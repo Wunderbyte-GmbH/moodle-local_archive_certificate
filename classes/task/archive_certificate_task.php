@@ -18,6 +18,7 @@ namespace local_archive_certificate\task;
 
 use core\task\adhoc_task;
 use tool_certificate\certificate;
+use tool_certificate\template;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -55,43 +56,9 @@ class archive_certificate_task extends adhoc_task {
         }
 
         try {
-            // Get the certificate PDF
-            $certificate = new certificate($issue->templateid);
-
-            // Generate PDF
-            $filearea = 'issues';
-            $itemid = $issue->id;
-            $fs = get_file_storage();
-
-            // Check if certificate file already exists
-            $files = $fs->get_area_files(
-                \context_system::instance()->id,
-                'tool_certificate',
-                $filearea,
-                $itemid,
-                'filename',
-                false
-            );
-
-            if (empty($files)) {
-                // Generate the certificate PDF if it doesn't exist
-                $pdf = $certificate->generate_pdf(false, $issue);
-                $filename = $issue->code . '.pdf';
-
-                // Store the generated PDF
-                $filerecord = [
-                    'contextid' => \context_system::instance()->id,
-                    'component' => 'tool_certificate',
-                    'filearea' => $filearea,
-                    'itemid' => $itemid,
-                    'filepath' => '/',
-                    'filename' => $filename,
-                ];
-
-                $file = $fs->create_file_from_string($filerecord, $pdf);
-            } else {
-                $file = reset($files);
-            }
+            // Generate the certificate PDF if it doesn't exist
+            $template = template::instance($issue->templateid);
+            $file = $template->create_issue_file($issue, false);
 
             // Create archive directory if it doesn't exist
             $archivepath = $this->get_archive_path();
