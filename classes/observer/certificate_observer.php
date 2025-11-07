@@ -38,6 +38,7 @@ class certificate_observer {
             'courseid' => $event->courseid ?? 0,
             'timecreated' => $event->timecreated
         ]);
+        $task->set_next_run_time(time() + 3 * DAYSECS);
 
         manager::queue_adhoc_task($task);
     }

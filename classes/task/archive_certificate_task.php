@@ -72,12 +72,12 @@ class archive_certificate_task extends adhoc_task {
             $date = date('Y-m-d', $issue->timecreated);
             $filename = sprintf('%s_%s_%s_%s.pdf',
                 $date,
-                clean_filename($user->username),
-                clean_filename($user->firstname),
-                clean_filename($user->lastname)
+                $user->username,
+                $user->firstname,
+                $user->lastname
             );
 
-            $archivefilepath = $archivepath . '/' . $filename;
+            $archivefilepath = $archivepath . '/' . clean_filename($filename);
 
             // Copy the certificate to archive
             if ($file->copy_content_to($archivefilepath)) {
@@ -97,7 +97,7 @@ class archive_certificate_task extends adhoc_task {
      *
      * @return string
      */
-    private function get_archive_path() {
+    private function get_archive_path(): string {
         global $CFG;
 
         $path = get_config('archive_certificate', 'archivepath');
@@ -122,6 +122,6 @@ class archive_certificate_task extends adhoc_task {
  * @param string $path
  * @return bool
  */
-function is_absolute_path($path) {
-    return strpos($path, '/') === 0 || (PHP_OS_FAMILY === 'Windows' && preg_match('/^[A-Za-z]:/', $path));
+function is_absolute_path(string $path): bool {
+    return str_starts_with($path, '/') || (PHP_OS_FAMILY === 'Windows' && preg_match('/^[A-Za-z]:/', $path));
 }
