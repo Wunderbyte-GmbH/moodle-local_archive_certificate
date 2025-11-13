@@ -76,8 +76,8 @@ class archive_certificate_task extends adhoc_task {
                 $user->firstname,
                 $user->lastname
             );
-
-            $archivefilepath = $archivepath . '/' . clean_filename($filename);
+            $tmpfilename = clean_filename($filename);
+            $archivefilepath = $archivepath . '/' . iconv('UTF-8', 'ASCII//TRANSLIT', $tmpfilename);
 
             // Copy the certificate to archive
             if ($file->copy_content_to($archivefilepath)) {
